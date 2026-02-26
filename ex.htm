@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WalletTrack — Dashboard Financier</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --primary: #38bdf8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 2rem; line-height: 1.5; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+        .accent { color: var(--primary); }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .card { background: var(--card); border-radius: 1rem; padding: 1.5rem; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+
+        /* Formulaire */
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        input, select { width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #475569; background: #0f172a; color: white; outline: none; transition: border 0.2s; }
+        input:focus { border-color: var(--primary); }
+        button { width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .btn-add { background: var(--primary); color: #0f172a; }
+        .btn-export { background: transparent; border: 1px solid var(--text-muted); color: var(--text); width: auto; padding: 0.5rem 1rem; font-size: 0.8rem; }
+        button:hover { opacity: 0.9; }
+
+        /* Tableau */
+        .table-container { overflow-x: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th { color: var(--text-muted); font-weight: 500; padding: 0.75rem; border-bottom: 1px solid #334155; }
+        td { padding: 0.75rem; border-bottom: 1px solid #334155; }
+        .amount-pos { color: var(--success); }
+        .amount-neg { color: var(--danger); }
+
+        /* Stats */
+        .summary { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-box { flex: 1; padding: 1rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); }
+        .stat-val { font-size: 1.25rem; font-weight: 700; }
+
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <header>
+        <h1>Wallet<span class="accent">Track</span></h1>
+        <button class="btn-export" onclick="exportToCSV()">💾 Export CSV</button>
+    </header>
+
+    <div class="summary">
+        <div class="stat-box">
+            <label>Solde Total</label>
+            <div id="total-balance" class="stat-val">0.00 €</div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3 style="margin-bottom: 1.2rem;">Nouvelle Transaction</h3>
+            <form id="finance-form">
+                <div class="form-group">
+                    <label>Libellé</label>
+                    <input type="text" id="desc" placeholder="ex: Salaire, Loyer..." required>
+                </div>
+                <div class="form-group">
+                    <label>Montant (€)</label>
+                    <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie</label>
+                    <select id="category">
+                        <option value="Revenu">Revenu</option>
+                        <option value="Alimentation">Alimentation</option>
+                        <option value="Loisirs">Loisirs</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-add">Ajouter la transaction</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 1.2rem;">Répartition des dépenses</h3>
+            <canvas id="expenseChart" width="400" height="250"></canvas>
+        </div>
+
+        <div class="card" style="grid-column: 1 / -1;">
+            <h3>Historique</h3>
+            <div class="table-container">
+                <table id="transaction-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Catégorie</th>
+                            <th>Montant</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let transactions = JSON.parse(localStorage.getItem('wallet_data')) || [];
+    let myChart;
+
+    const form = document.getElementById('finance-form');
+    const tableBody = document.querySelector('#transaction-table tbody');
+    const balanceDisplay = document.getElementById('total-balance');
+
+    // Initialisation
+    window.onload = () => {
+        updateUI();
+        initChart();
+    };
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const amount = parseFloat(document.getElementById('amount').value);
+        if(amount === 0) return alert("Le montant ne peut pas être nul.");
+
+        const transaction = {
+            id: Date.now(),
+            desc: document.getElementById('desc').value,
+            amount: amount,
+            category: document.getElementById('category').value,
+            type: amount > 0 ? 'income' : 'expense'
+        };
+
+        transactions.push(transaction);
+        saveAndRefresh();
+        form.reset();
+    });
+
+    function saveAndRefresh() {
+        localStorage.setItem('wallet_data', JSON.stringify(transactions));
+        updateUI();
+        updateChart();
+    }
+
+    function updateUI() {
+        tableBody.innerHTML = '';
+        
+        // Calcul du total avec .reduce()
+        const total = transactions.reduce((acc, t) => acc + t.amount, 0);
+        balanceDisplay.textContent = `${total.toFixed(2)} €`;
+        balanceDisplay.className = `stat-val ${total >= 0 ? 'amount-pos' : 'amount-neg'}`;
+
+        transactions.slice().reverse().forEach(t => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${t.desc}</td>
+                <td><span style="font-size: 0.8rem; opacity: 0.7">${t.category}</span></td>
+                <td class="${t.amount > 0 ? 'amount-pos' : 'amount-neg'}">${t.amount.toFixed(2)} €</td>
+                <td><button onclick="deleteTx(${t.id})" style="background:none; border:none; color:#ef4444; cursor:pointer;">✕</button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function deleteTx(id) {
+        transactions = transactions.filter(t => t.id !== id);
+        saveAndRefresh();
+    }
+
+    // --- Notions Avancées : Chart.js ---
+    function initChart() {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: ['#38bdf8', '#fbbf24', '#f87171', '#34d399', '#a78bfa'],
+                    borderWidth: 0
+                }]
+            },
+            options: { plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+        });
+        updateChart();
+    }
+
+    function updateChart() {
+        if(!myChart) return;
+        const expensesOnly = transactions.filter(t => t.amount < 0);
+        const categories = [...new Set(expensesOnly.map(t => t.category))];
+        const data = categories.map(cat => {
+            return expensesOnly
+                .filter(t => t.category === cat)
+                .reduce((acc, t) => acc + Math.abs(t.amount), 0);
+        });
+
+        myChart.data.labels = categories;
+        myChart.data.datasets[0].data = data;
+        myChart.update();
+    }
+
+    // --- Notions Avancées : Export CSV ---
+    function exportToCSV() {
+        if(transactions.length === 0) return alert("Rien à exporter.");
+        
+        let csvContent = "Description,Categorie,Montant\n";
+        transactions.forEach(t => {
+            csvContent += `${t.desc},${t.category},${t.amount}\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "wallet_track_export.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>
