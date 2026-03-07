@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Finder – Tableau de bord</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style_patch.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">Restaurant Finder</div>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Accueil</a></li>
+        <li><a href="Restaurant.html" class="nav-link">Restaurants</a></li>
+        <li><a href="favoris.html" class="nav-link">Favoris</a></li>
+        <li><a href="dashboard.html" class="nav-link active">Tableau de bord</a></li>
+        <li><a href="#" class="nav-link" onclick="logout()">Déconnexion</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <h1 id="welcome">Tableau de bord</h1>
+      <p>Aperçu de votre activité</p>
+
+      <div class="cards-grid" style="margin-top:1.5rem;">
+        <div class="card">
+          <h3>Restaurants consultés</h3>
+          <div class="stat-number">0</div>
+        </div>
+        <div class="card">
+          <h3>Mes Favoris</h3>
+          <div class="stat-number" id="fav-count">0</div>
+        </div>
+        <div class="card">
+          <h3>Compte</h3>
+          <div class="stat-number" id="account-status">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top:2rem;">
+        <a href="Restaurant.html"><button class="btn btn-primary">Voir les restaurants</button></a>
+        <a href="favoris.html"><button class="btn btn-outline" style="margin-left:0.8rem">Mes favoris</button></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2026 Restaurant Finder. Tous droits réservés.</p>
+  </footer>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

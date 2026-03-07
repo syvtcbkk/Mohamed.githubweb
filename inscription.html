@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Finder – Inscription</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style_patch.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">Restaurant Finder</div>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Accueil</a></li>
+        <li><a href="connexion.html" class="nav-link">Connexion</a></li>
+        <li><a href="inscription.html" class="nav-link active">Inscription</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <div class="form-box">
+        <h2>Inscription</h2>
+        <div id="alert" class="alert"></div>
+        <div class="form-group">
+          <label for="nom">Nom complet</label>
+          <input type="text" id="nom" placeholder="Votre nom">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" placeholder="Créer un mot de passe">
+        </div>
+        <div class="form-group">
+          <label for="confirm">Confirmer le mot de passe</label>
+          <input type="password" id="confirm" placeholder="Répéter le mot de passe">
+        </div>
+        <button class="btn btn-primary" onclick="register()">S'inscrire</button>
+        <p class="toggle-text">Déjà inscrit ? <a href="connexion.html">Se connecter</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2026 Restaurant Finder. Tous droits réservés.</p>
+  </footer>
+
+  <script src="inscription.js"></script>
+</body>
+</html>

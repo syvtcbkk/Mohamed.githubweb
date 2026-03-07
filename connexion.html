@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Finder – Connexion</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style_patch.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">Restaurant Finder</div>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Accueil</a></li>
+        <li><a href="connexion.html" class="nav-link active">Connexion</a></li>
+        <li><a href="inscription.html" class="nav-link">Inscription</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <div class="form-box">
+        <h2>Connexion</h2>
+        <div id="alert" class="alert"></div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" onclick="login()">Se connecter</button>
+        <p class="toggle-text">Pas encore inscrit ? <a href="inscription.html">S'inscrire</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2026 Restaurant Finder. Tous droits réservés.</p>
+  </footer>
+
+  <script src="connexion.js"></script>
+</body>
+</html>

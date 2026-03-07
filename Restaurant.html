@@ -1,0 +1,94 @@
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Finder – Restaurants</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .restaurant-banner {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #eee;
+      margin: 1.5rem 0 1rem;
+    }
+    .tab-btn {
+      padding: .75rem 1.5rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #888;
+      font-weight: 500;
+      transition: all .2s;
+      margin-bottom: -2px;
+    }
+    .tab-btn.active {
+      color: #1A56B0;
+      border-bottom-color: #1A56B0;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .hours-table { width: 100%; border-collapse: collapse; }
+    .hours-table td { padding: .4rem .6rem; border-bottom: 1px solid #f0f0f0; }
+    .hours-table td:first-child { font-weight: 500; width: 130px; text-transform: capitalize; }
+    .menu-category { margin-top: 1.5rem; }
+    .menu-category h4 { color: #1A56B0; border-bottom: 1px solid #eee; padding-bottom: .3rem; margin-bottom: .6rem; }
+    .menu-item { display: flex; justify-content: space-between; padding: .4rem 0; border-bottom: 1px solid #fafafa; }
+    .menu-price { font-weight: 600; color: #E65100; }
+    .review-card { background: #f9f9f9; border-radius: 8px; padding: 1rem; margin-bottom: .8rem; }
+    .review-meta { display: flex; align-items: center; gap: .5rem; margin-bottom: .4rem; }
+    .review-author { font-weight: 600; }
+    .review-date { color: #aaa; font-size: .8rem; }
+    .fav-btn-detail {
+      background: none;
+      border: 2px solid #E65100;
+      color: #E65100;
+      border-radius: 6px;
+      padding: .5rem 1.2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all .2s;
+      margin-left: .8rem;
+    }
+    .fav-btn-detail.active {
+      background: #E65100;
+      color: white;
+    }
+    .map-iframe { width: 100%; height: 300px; border: none; border-radius: 8px; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">Resto<span>Gabon</span></div>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Accueil</a></li>
+        <li><a href="Restaurant.html" class="nav-link active">Restaurants</a></li>
+        <li><a href="favoris.html" class="nav-link">Favoris</a></li>
+        <li><a href="connexion.html" class="nav-link">Connexion</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="restaurant-detail">
+    <p style="text-align:center;padding:3rem;color:#888;">Chargement...</p>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 RestoGabon. Tous droits réservés.</p>
+  </footer>
+
+ 
+  <script src="data.js"></script>
+  <script src="restaurant.js"></script>
+  
+</body>
+</html>
